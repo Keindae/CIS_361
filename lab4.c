@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct Mark {
 	int x;
@@ -38,6 +39,7 @@ int main()
 	}
 
 	// use qsort() to sort data in list
+    qsort(list, size, sizeof(list[0]), compare);
 
 	for (i = 0; i < size; i++)
 	{
@@ -57,13 +59,20 @@ void getInfo (FILE * f, Mark * p)
 {
 	// read two integers from the input file and 
 	// store them in the structure that p points to
-
+    char input[4];
+    fscanf(f, "%s", &input);
+    strtok(input, "\n");
+    p->x = atoi(input);
+    fscanf(f, "%s", &input);
+    strtok(input, "\n");
+    p->y = atoi(input);
 }
 
 void printInfo (FILE * f, Mark item)
 {
 	// display each mark in format of (x, y)
 	// and five marks per line
+    fprintf(stdout, "(%d, %d)", item.x, item.y);
 
 }
 
@@ -72,7 +81,17 @@ int compare (const void * a, const void * b)
 	// compare two structures
 	// return 0 if they are equal, a value less than 0 if the first 
 	// comes before the second, a value greater than 0 otherwise 
-	
+    Mark *markA = (Mark *)a;
+    Mark *markB = (Mark *)b;
+
+    int comp1 = markA->x - markB->x;
+    int comp2 = markA->y - markB->y;
+
+    if(comp2 != 0){
+        return comp2;
+    }else{
+        return comp1;
+    }
 }
 
 
