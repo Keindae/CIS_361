@@ -1,3 +1,9 @@
+/*
+Matt Noblett
+Setting up for the Linked List and Linked List functions
+Tao - GVSU Winter 2017
+*/
+
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,35 +17,38 @@ struct node{
 };
 struct node *head;
 
-//Print all the elements inside of the linked list
-void printList(){
+//Print all the elements inside of the linked list to a defined outputfile.
+void printList(char *argv){
+  FILE *outputfile;
+  outputfile = fopen(argv, "w");
     struct node *current = head;
     while(current != NULL){
-        printf("%s: %d\n", current->identifier, current->occurences );
+        fprintf(outputfile, "%s: %d\n", current->identifier, current->occurences);
         current = current -> next;
     }
+    fclose(outputfile);
 }
 //Initalizes the linked list - creates only the head
-void initialize_list(char *_identifier){
+void createList(char *identifier){
     head = (struct node *) malloc(sizeof(struct node));
-    head->identifier = _identifier;
+    head->identifier = identifier;
     head->occurences = 1;
     head->next = NULL;
 }
 //Pushes an item to the front of the list, rather than appending it to
 //the end of the list
-void push(char _identifier[]){
+void pushToFront(char identifier[]){
     struct node * new_node;
     new_node = malloc(sizeof(struct node));
     new_node->occurences = 1;
-    new_node->identifier = _identifier;
+    new_node->identifier = identifier;
     new_node->next = head;
     head = new_node;
     return;
 }
 //Moves the found item to the front of the linked list, and moves the head
 //to the current position in the linked list
-void move_to_front(struct node * current, struct node * previous){
+void sortToFront(struct node * current, struct node * previous){
     //if the previous is null, then there is nothing to do.
     if(previous == NULL){
         return;
@@ -51,10 +60,10 @@ void move_to_front(struct node * current, struct node * previous){
     head = current;
 }
 //Creates an identifier to be added to the position in the linked list.
-void add_identifier( char *_identifier){
+void addIdentifier( char *identifier){
     //make local copy of string
-    char *copy = malloc(1 + strlen(_identifier));
-    if(copy){ strcpy(copy, _identifier);}
+    char *copy = malloc(1 + strlen(identifier));
+    if(copy){ strcpy(copy, identifier);}
     struct node * current = head;
     struct node * previous = NULL;
     while(current != NULL){
@@ -63,7 +72,7 @@ void add_identifier( char *_identifier){
         //that word, and then move it to the front of the linked list.
         if(strcmp(copy, current->identifier) == 0){
             current->occurences++;
-            move_to_front(current, previous);
+            sortToFront(current, previous);
 
             return;
         }
@@ -71,5 +80,5 @@ void add_identifier( char *_identifier){
         current = current -> next;
     }
     //this is only hit if there are not more identifiers in the list.
-    push(copy);
+    pushToFront(copy);
 }

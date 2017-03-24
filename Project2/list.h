@@ -1,9 +1,15 @@
+/*
+Matt Noblett
+Header File for the functions
+Tao - GVSU Winter 2017
+*/
+
 #ifndef LIST_H_
 #define LIST_H_
-void printList();
-void initialize_list(char *_identifier);
-void add_identifier(char _identifier[]);
-void push(char _identifier[]);
-void move_to_front(struct node *current, struct node *previous);
+void printList(char *argv);
+void createList(char *identifier);
+void addIdentifier(char identifier[]);
+void pushToFront(char identifier[]);
+void sortToFront(struct node *current, struct node *previous);
 
 #endif

@@ -1,3 +1,8 @@
+/*
+Matt Noblett
+Project 2 - Self Organizing List
+Tao - GVSU Winter 2017
+*/
 
 #include <stdio.h>
 #include <string.h>
@@ -6,77 +11,83 @@
 #define MAX_IDENTIFIER_LENGTH 31
 //This is used for parsing the file. This checks for either a specific
 //delimiter or character, or if there are multiple lines.
-void handleChar(char currentString[], char newChar){
+void readChar(char currentString[], char character){
   currentString[strcspn(currentString, "\r\n")] = 0;
   int len = strlen(currentString);
   if(len == 0){
-    if(isalpha(newChar) || newChar == '_'){
-      currentString[0] = newChar;
+    if(isalpha(character) || character == '_'){
+      currentString[0] = character;
     }
   }
   //Checking to see if it isalpha, isdigit,
   //or if the new character is equal to "_"
-  else if(isalpha(newChar) || newChar == '_' || isdigit(newChar)){
-    currentString[len] = newChar;
+  else if(isalpha(character) || character == '_' || isdigit(character)){
+    currentString[len] = character;
   }
   else if(len != 0){
     currentString[strcspn(currentString, "\r\n")] = 0;
-    add_identifier(currentString);
+    addIdentifier(currentString);
     memset(currentString, 0, MAX_IDENTIFIER_LENGTH);
   }
 }
 //Main used to execute the functions and check if everything is working.
-int main(){
+int main(int argc, char **argv){
     char currentIdentifier[MAX_IDENTIFIER_LENGTH];
     currentIdentifier[0] = NULL;
-    initialize_list("Matt Noblett");
+    //Used to get the command line arguments that is the user is passing in
+    char *file;
+    file = argv[1];
+    char *file2;
+    file2 = argv[2];
     //Creates the file that we are reading in
-    FILE *file_in;
-    char buf[1000];
+    FILE *inputfile;
+    char buffer[1000];
     int isSingleLineComment = 0;
     int isMultiLineComment = 0;
     int isString = 0;
-    file_in = fopen("sample1.c", "r");
-    if(!file_in){
-        printf("File failed to open");
+    //Open the file that is passed in by the user via command line
+    inputfile = fopen(file, "r");
+    if(!inputfile){
+        printf("Error Opening the File");
         return 1;
     }
     //Reading each line of the file.
-    while(fgets(buf, 1000, file_in)!=NULL){
+    //Logic for figuring out the delimeters and unique characters
+    while(fgets(buffer, 1000, inputfile)!=NULL){
         isSingleLineComment = 0;
         int i;
-        for(i = 0; i < strlen(buf); i++){
+        for(i = 0; i < strlen(buffer); i++){
           //If we are already in a comment
           //or string don't look for beginning characters
           if(!isSingleLineComment && !isMultiLineComment && !isString){
-            if(buf[i] == '/'){
-              if(buf[i + 1] == '/'){
+            if(buffer[i] == '/'){
+              if(buffer[i + 1] == '/'){
                 isSingleLineComment = 1;
               }
-              if(buf[i + 1] == '*'){
+              if(buffer[i + 1] == '*'){
                 isSingleLineComment = 0;
                 isMultiLineComment = 1;
               }
             }
-            else if(buf[i] == '"'){
+            else if(buffer[i] == '"'){
                isString = 1;
              }
           }else{
-            if(isMultiLineComment && buf[i] == '*' && buf[i + 1] == '/'){
+            if(isMultiLineComment && buffer[i] == '*' && buffer[i + 1] == '/'){
               isMultiLineComment = 0;
             }
-            else if(isString && buf[i] == '"'){
+            else if(isString && buffer[i] == '"'){
               isString = 0;
             }
           }
           if(!isSingleLineComment && !isMultiLineComment && !isString){
-            handleChar(currentIdentifier, buf[i]);
+            readChar(currentIdentifier, buffer[i]);
           }
         }
     }
-    fclose(file_in);
+    fclose(inputfile);
 
-    printList();
+    printList(file2);
     return 0;
 
 }
