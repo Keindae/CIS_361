@@ -33,5 +33,7 @@ do
         esac
     done
     #Allow variable to be used in outside scripts
-    export -p NUM_IN_LINES
+    # echo $NUM_IN_LINES
+
 done < $*
+export numLines=$NUM_IN_LINES

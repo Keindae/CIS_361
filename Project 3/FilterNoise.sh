@@ -12,23 +12,31 @@ then
     exit 1
 fi
 
+noiseArray=()
+input="noise.txt"
+while IFS= read -r word
+do
+  noiseArray+=("${word}")
+done<"$1"
+
+
+
 #Read in standard output from last script as input
-sleep 5
-while read -r line
+
+while read -r line;
 do
     set $line
     front=$1
-    #Look through noise words and output line if
-    #doesn't contain a noise word
-    while read noise
+    isNoise=false
+    for i in "${noiseArray[@]}"
     do
-        case "$1" in
-            *$noise*)
-                continue
-            ;;
-            *)
-                echo $line
-            ;;
-        esac
+      if [ "${i}" == "${front}" ]
+      then
+        isNoise=true
+      fi
     done
-done < $*
+    if [ $isNoise == false ]
+    then
+      echo $line
+    fi
+done
