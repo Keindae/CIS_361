@@ -42,8 +42,11 @@ int main(int argc, char **argv){
     //Creates the file that we are reading in
     FILE *inputfile;
     char buffer[1000];
+    //Used to store how many single line comments
     int isSingleLineComment = 0;
+    //Used to store how many multi line comments there are
     int isMultiLineComment = 0;
+    //Store the number of strings
     int isString = 0;
     //Open the file that is passed in by the user via command line
     inputfile = fopen(file, "r");
@@ -53,17 +56,22 @@ int main(int argc, char **argv){
     }
     //Reading each line of the file.
     //Logic for figuring out the delimeters and unique characters
-    while(fgets(buffer, 1000, inputfile)!=NULL){
+    while(fgets(buffer, 1500, inputfile)!=NULL){
         isSingleLineComment = 0;
         int i;
         for(i = 0; i < strlen(buffer); i++){
           //If we are already in a comment
           //or string don't look for beginning characters
           if(!isSingleLineComment && !isMultiLineComment && !isString){
+            //Check to see if the line is a comment
             if(buffer[i] == '/'){
+              //Move ahead one position to see if it is going to be a
+              //multi line comment, or a single line comment.
               if(buffer[i + 1] == '/'){
                 isSingleLineComment = 1;
               }
+              //If an asterik follows a '/', then I know it is going to be a
+              //multi line comment.
               if(buffer[i + 1] == '*'){
                 isSingleLineComment = 0;
                 isMultiLineComment = 1;
